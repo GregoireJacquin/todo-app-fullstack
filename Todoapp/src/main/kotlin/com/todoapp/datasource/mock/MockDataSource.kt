@@ -15,4 +15,6 @@ class MockDataSource : TodoDataSource {
     )
 
     override fun retrieveTodos(): Collection<Todo> = todos
+    override fun getTodoById(id: String): Todo = todos.firstOrNull() { it.id == id.toInt() } ?: throw NoSuchElementException("Todo with id $id not found")
+
 }
