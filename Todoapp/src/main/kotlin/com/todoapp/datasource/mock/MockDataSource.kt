@@ -16,5 +16,13 @@ class MockDataSource : TodoDataSource {
 
     override fun retrieveTodos(): Collection<Todo> = todos
     override fun getTodoById(id: String): Todo = todos.firstOrNull() { it.id == id.toInt() } ?: throw NoSuchElementException("Todo with id $id not found")
+    override fun createTodo(todo: Todo): Todo {
+        if(todos.any { it.id == todo.id }) {
+            throw IllegalArgumentException("Todo with id ${todo.id} already exists")
+        }
+        todos.add(todo)
+        return todo
+    }
+
 
 }
