@@ -14,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
+import org.springframework.test.web.servlet.patch
 import org.springframework.test.web.servlet.post
 
 @SpringBootTest
@@ -99,6 +100,54 @@ class TodoControllerTest @Autowired constructor(val mockMvc: MockMvc, val jsonMa
             performedPost.andDo { print() }
                 .andExpect {
                     status { isBadRequest()}
+                }
+        }
+    }
+    @Nested
+    @DisplayName("PATCH /api/todo")
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    inner class PacthTodo {
+        @Test
+        fun `Should return a todo by todo`() {
+            val updateTodo: Todo = Todo(
+                id = 2, title = "Todo 22", description = "Description 22",
+                status = false
+            );
+
+            val performedPAtch =  mockMvc.patch("/api/todos") {
+                contentType = MediaType.APPLICATION_JSON
+                content = jsonMapper.writeValueAsString(updateTodo)
+            }
+            performedPAtch.andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content {
+                        contentType(MediaType.APPLICATION_JSON)
+                        json(jsonMapper.writeValueAsString(updateTodo))
+                    }
+                }
+            mockMvc.get("/api/todos/2")
+                .andDo { print() }
+                .andExpect {
+                    status { isOk() }
+                    content { contentType("application/json") }
+                    jsonPath("$.title") { value("Todo 22") }
+                }
+        }
+        @Test
+        fun `Should return a bad request when todo does not exist`() {
+            val updateTodoInvalid: Todo = Todo(
+                id = 1000, title = "Todo 1000", description = "Description 1000",
+                status = false
+            );
+
+            val performedPAtch =  mockMvc.patch("/api/todos") {
+                contentType = MediaType.APPLICATION_JSON
+                content = jsonMapper.writeValueAsString(updateTodoInvalid)
+            }
+            performedPAtch.andDo { print() }
+                .andExpect {
+                    status { isNotFound()}
                 }
         }
     }

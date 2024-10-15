@@ -6,4 +6,5 @@ interface TodoDataSource {
     fun retrieveTodos(): Collection<Todo>
     fun getTodoById(id: String): Todo
     fun createTodo(todo: Todo): Todo
+    fun update(todo: Todo): Todo
 }

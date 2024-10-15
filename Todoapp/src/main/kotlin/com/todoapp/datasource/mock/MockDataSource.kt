@@ -23,6 +23,12 @@ class MockDataSource : TodoDataSource {
         todos.add(todo)
         return todo
     }
+    override fun update(todo: Todo): Todo {
+        val currentTodo = todos.firstOrNull() { it.id == todo.id } ?: throw NoSuchElementException("Todo with id ${todo.id} not found")
+        todos.remove(currentTodo)
+        todos.add(todo)
+        return todo
+    }
 
 
 }
